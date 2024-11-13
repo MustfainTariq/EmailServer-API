@@ -5,7 +5,7 @@ app.use(express.json());
 
 // Configure Nodemailer transporter with environment variables
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Or use 'smtp.mailgun.org' if using Mailgun's SMTP
+    service: 'gmail', 
     auth: {
         user: process.env.EMAIL_USER, // Use Railway environment variable for the email address
         pass: process.env.EMAIL_PASS, // Use Railway environment variable for the email password
@@ -13,9 +13,9 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post('/send-email', async (req, res) => {
-    const { to_email, verification_code } = req.body;
+    const { to_email, verification_code, firstName } = req.body;
 
-    if (!to_email || !verification_code) {
+    if (!to_email || !verification_code || !firstName) {
         return res.status(400).send("Missing email or verification code");
     }
 
@@ -23,9 +23,9 @@ app.post('/send-email', async (req, res) => {
         from: '"Visual Thoughts App" <no-reply@visualthoughtsapp.com>',
         to: to_email,
         subject: 'Your Verification Code',
-        text: `Hello User,\n\nThank you for signing up with Visual Thoughts App!\n\nYour verification code is:\n\n${verification_code}\n\nPlease enter this code in the app to verify your email address. This code is valid for a limited time.\n\nThis is an automated email. Please do not reply.\n\nBest regards,\nThe Visual Thoughts App Team`,
+        text: `Hello ${firstName},\n\nThank you for signing up with Visual Thoughts App!\n\nYour verification code is:\n\n${verification_code}\n\nPlease enter this code in the app to verify your email address. This code is valid for a limited time.\n\nThis is an automated email. Please do not reply.\n\nBest regards,\nThe Visual Thoughts App Team`,
         html: `
-            <p>Hello User,</p>
+            <p>Hello ${firstName},</p>
             <p>Thank you for signing up with <strong>Visual Thoughts App</strong>!</p>
             <p>Your verification code is:</p>
             <h2 style="color: #333;">${verification_code}</h2>

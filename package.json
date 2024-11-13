@@ -2,13 +2,13 @@
     "name": "your-app-name",
     "version": "1.0.0",
     "description": "Your app description",
-    "main": "server.js", 
+    "main": "server.js",
     "scripts": {
-      "start": "node server.js"
+        "start": "node server.js"
     },
     "dependencies": {
-      "express": "^4.17.1",
-      "nodemailer": "^6.6.0"
+        "dotenv": "^16.4.5",
+        "express": "^4.17.1",
+        "nodemailer": "^6.6.0"
     }
-  }
-  
+}

@@ -1,8 +1,10 @@
+// Required imports and configuration
 const express = require('express');
 const nodemailer = require('nodemailer');
 const app = express();
 app.use(express.json());
 require('dotenv').config();
+
 // Configure Nodemailer transporter with environment variables
 const transporter = nodemailer.createTransport({
     service: 'gmail', 
@@ -41,6 +43,38 @@ app.post('/send-email', async (req, res) => {
     } catch (error) {
         console.error("Error sending email:", error);
         res.status(500).send('Error sending verification code.');
+    }
+});
+
+// New endpoint to send reset password link
+app.post('/send-reset-password', async (req, res) => {
+    const { to_email, reset_link } = req.body;
+
+    if (!to_email || !reset_link) {
+        return res.status(400).send("Missing email or reset link");
+    }
+
+    const mailOptions = {
+        from: '"Visual Thoughts App" <no-reply@visualthoughtsapp.com>',
+        to: to_email,
+        subject: 'Reset Your Password',
+        text: `Hello,\n\nWe received a request to reset your password for your Visual Thoughts App account.\n\nYou can reset your password by clicking the link below:\n\n${reset_link}\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nThe Visual Thoughts App Team`,
+        html: `
+            <p>Hello,</p>
+            <p>We received a request to reset your password for your <strong>Visual Thoughts App</strong> account.</p>
+            <p>You can reset your password by clicking the link below:</p>
+            <p><a href="${reset_link}" target="_blank" style="color: #1a73e8;">Reset Password</a></p>
+            <p>If you did not request a password reset, please ignore this email.</p>
+            <p>Best regards,<br>The Visual Thoughts App Team</p>
+        `,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        res.send('Password reset link sent!');
+    } catch (error) {
+        console.error("Error sending reset password email:", error);
+        res.status(500).send('Error sending reset password link.');
     }
 });
 
